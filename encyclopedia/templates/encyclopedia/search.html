@@ -1,0 +1,23 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+Encyclopedia
+{% endblock %}
+
+{% block body %}
+
+<h1 class="text-4xl font-bold dark:text-white mb-2">Results  for <span class="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600"> "{{ query }}"</span></h1>
+
+<ul class="space-y-4 mt-8 text-left text-gray-500 dark:text-gray-400">
+    {% for entry in results %}
+    <li class="flex items-center space-x-3 rtl:space-x-reverse link">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+          </svg>    
+        <a href="{% url 'wiki-page' entry %}" class="basic-link text-lg font-medium text-gray-900 dark:text-white">{{ entry }}</a>
+
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
