@@ -11,4 +11,5 @@ urlpatterns = [
     path('random/', views.random, name='random'),
     path('edit/<str:title>/', views.edit, name='edit'),
     path('search/', views.search, name='search'),
+    path('delete/<str:title>/', views.delete, name='delete'),
 ]

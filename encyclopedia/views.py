@@ -1,3 +1,4 @@
+from email import charset
 from django.shortcuts import render
 from . import util
 from markdown2 import Markdown
@@ -34,15 +35,30 @@ def create(request):
     if request.method == "POST":
         title = request.POST["title"]
         content = request.POST["content"]
-        pages = util.list_entries()
-        if title in pages:
-            return HttpResponse("Title already exists", status=400)
+        exists = util.exists_entry(title)
+        if exists:
+            return render(request, "encyclopedia/create.html", {
+                "title": title,
+                "content": content,
+                "exists": True,
+                "success": False,
+            })
         else: 
-            util.save_entry(title, content)
-            pages = util.list_entries()
-            return wiki_page(request, title)
+            try:
+                util.save_entry(title, content)
+                return wiki_page(request, title)
+            except Exception as e:
+                print(content)
+                return render(request, "encyclopedia/create.html", {
+                "title": title,
+                "content": content,
+                "error": True,
+                "success": False,
+            })
     else:
-        return render(request, "encyclopedia/create.html")
+        return render(request, "encyclopedia/create.html", {
+            "success": True,
+        })
     
 
 # redirect to random wiki page
@@ -55,8 +71,17 @@ def random(request):
 def edit(request, title):
     if request.method == "POST":
         content = request.POST["content"]
-        util.save_entry(title, content)
-        return wiki_page(request, title)
+        title = request.POST["title"]
+        try:
+            util.save_entry(title, content)
+            pages = util.list_entries()
+            return wiki_page(request, title)
+        except:
+             return render(request, "encyclopedia/edit.html", {
+            "title": title,
+            "content": content,
+            "error": True,
+            })
     else:
         content = util.get_entry(title)
         return render(request, "encyclopedia/edit.html", {
@@ -82,8 +107,21 @@ def search(request):
             "query": query
         })
     else:
-        return render(request, "encyclopedia/404.html")
+        return render(request, "encyclopedia/404.html", {
+            "query": query,
+            "NotFound": True,
+        })
     
-# 404 handler
+def delete(request, title):
+   response = util.delete_entry(title)
+   if response:
+        return render(request, "encyclopedia/index.html", {
+            "entries": util.list_entries(),
+            "deleted": True,
+            "title": title
+        })
+   else:
+        return render(request, "encyclopedia/404.html")
+   
 def handler404(request, exception):
     return render(request, "encyclopedia/404.html")
