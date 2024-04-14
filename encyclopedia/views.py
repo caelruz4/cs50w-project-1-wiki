@@ -4,6 +4,7 @@ from . import util
 from markdown2 import Markdown
 from django.http import HttpResponse
 from random import randint
+
 # Instanciar para convertir markdown a html
 md = Markdown()
 
@@ -25,10 +26,14 @@ def wiki_page(request, title):
     if html is None:
         return render(request, "encyclopedia/404.html")
     else:
-        return render(request, "encyclopedia/page.html", {
-            "title": title,
-            "html": html
-        })
+        try:
+            return render(request, "encyclopedia/page.html", {
+                "title": title,
+                "html": html
+            })	
+        except Exception as e:
+            print(e)
+            return render(request, "encyclopedia/404.html")
     
 # Create entry
 def create(request):
@@ -89,7 +94,6 @@ def edit(request, title):
             "content": content
         })
     
-
 # search
 def search(request):
     query = request.GET['q']
@@ -124,4 +128,5 @@ def delete(request, title):
         return render(request, "encyclopedia/404.html")
    
 def handler404(request, exception):
-    return render(request, "encyclopedia/404.html")
+    return render(request, 'encyclopedia/404.html', status=404)
+
