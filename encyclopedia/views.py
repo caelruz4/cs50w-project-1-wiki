@@ -9,8 +9,14 @@ from django.shortcuts import redirect
 # Instanciar para convertir markdown a html
 md = Markdown()
 
+def contains_accented_characters(text):
+    regex = r'[áéíóúÁÉÍÓÚüÜñÑ]'
+    return bool(re.search(regex, text))
+
 def is_valid_content(content):
-    caracteres_disponibles = r'^[ -~]+$'
+    caracteres_disponibles = r'^[\s\S]+$'
+    if contains_accented_characters(content):
+        return False
     return re.match(caracteres_disponibles, content) is not None
 
 
