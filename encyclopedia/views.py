@@ -10,7 +10,6 @@ from django.shortcuts import redirect
 md = Markdown()
 
 def is_valid_content(content):
-    # Regular expression to match printable ASCII characters
     caracteres_disponibles = r'^[ -~]+$'
     return re.match(caracteres_disponibles, content) is not None
 
@@ -89,14 +88,13 @@ def edit(request, title):
                 raise ValueError("Invalid content. Please only use English characters or printable characters.")
             else:
                 util.save_entry(new_title, content)
-                # Redirect to the edited page
+                
                 return render(request, "encyclopedia/page.html", {
                     "title": title,
                     "html": content,
                     "error": False,
                     })
         except Exception as e:
-            # Handle any exceptions, perhaps display an error message
             return render(request, "encyclopedia/edit.html", {
                 "title": title,
                 "content": content,
