@@ -4,9 +4,16 @@ from . import util
 from markdown2 import Markdown
 from django.http import HttpResponse
 from random import randint
-
+import re
+from django.shortcuts import redirect
 # Instanciar para convertir markdown a html
 md = Markdown()
+
+def is_valid_content(content):
+    # Regular expression to match printable ASCII characters
+    caracteres_disponibles = r'^[ -~]+$'
+    return re.match(caracteres_disponibles, content) is not None
+
 
 # funcion para convertir markdown a html
 def markdown_to_html(entry):
@@ -76,16 +83,25 @@ def random(request):
 def edit(request, title):
     if request.method == "POST":
         content = request.POST["content"]
-        title = request.POST["title"]
+        new_title = request.POST["title"]
         try:
-            util.save_entry(title, content)
-            pages = util.list_entries()
-            return wiki_page(request, title)
-        except:
-             return render(request, "encyclopedia/edit.html", {
-            "title": title,
-            "content": content,
-            "error": True,
+            if not is_valid_content(content):
+                raise ValueError("Invalid content. Please only use English characters or printable characters.")
+            else:
+                util.save_entry(new_title, content)
+                # Redirect to the edited page
+                return render(request, "encyclopedia/page.html", {
+                    "title": title,
+                    "html": content,
+                    "error": False,
+                    })
+        except Exception as e:
+            # Handle any exceptions, perhaps display an error message
+            return render(request, "encyclopedia/edit.html", {
+                "title": title,
+                "content": content,
+                "error": True,
+                "error_message": str(e)
             })
     else:
         content = util.get_entry(title)
@@ -94,7 +110,6 @@ def edit(request, title):
             "content": content
         })
     
-# search
 def search(request):
     query = request.GET['q']
     pages = util.list_entries()

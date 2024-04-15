@@ -10,6 +10,167 @@
     <link href="{% static 'encyclopedia/styles.css' %}" rel="stylesheet">
 </head>
 
+<style>
+   @import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap');
+
+body {
+  margin: 0;
+  background-color: white;
+}
+
+h1 {
+  font-weight: 750;
+  font-size: 2.35rem;
+  line-height: 2.5rem;
+  margin-block: 1rem;
+}
+
+h2 {
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+h3 {
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  margin-block: 0.5rem;
+}
+
+h4 {
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.5rem;
+  margin-block: 0.5rem;
+}
+ h5 {
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.5rem;
+  margin-block: 0.5rem;
+ }
+
+h6 {
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  margin-block: 0.5rem;
+
+}
+pre {
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  overflow: auto;
+}
+
+img {
+  max-width: 20rem;
+  height: auto;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  margin-inline: auto;
+
+}
+code {
+  font-family: 'Ubuntu Mono', monospace;
+  background-color: #d7d7d7;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: medium;
+}
+
+article {
+  margin: 1rem;
+  padding: 1rem;
+}
+img.logo {
+  max-width: none; /* Anula el máximo ancho */
+  margin-right: 0.7rem;
+  margin-left: 0rem;
+  margin-block: 0rem;
+}
+
+ol {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.sidebar-link
+{
+  list-style: none;
+  margin-left: -1.5rem;
+}
+ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+
+}
+a {
+  text-decoration: none;
+  color: #0369a1;
+  font-weight: 500;
+}
+
+.tracker {
+  list-style: none;
+}
+blockquote {
+  font-style: italic;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+  line-height: 2;
+  border-left: 5px solid #ccc;
+  padding-left: 1rem;
+
+}
+.basic-link {
+  text-decoration: none;
+  color: black;
+}
+.redirect-link {
+  text-decoration: none;
+  color: white;
+}
+.main {
+  padding: 10px;
+}
+
+.search {
+  width: 100%;
+  font-size: 15px;
+  line-height: 15px;
+}
+
+.sidebar {
+  background-color: #f0f0f0;
+  height: 100vh;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-top: 5px;
+}
+
+.link {
+  text-transform: none;
+}
+
+.link:hover {
+  background-color: #e5e7ebc0;
+  border-radius: 5px;
+}
+
+.wikis {
+  text-transform: capitalize;
+}
+</style>
 <body>
 
     
