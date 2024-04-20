@@ -1,8 +1,9 @@
 from email import charset
 from django.shortcuts import render
+from django.urls import reverse
 from . import util
 from markdown2 import Markdown
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from random import randint
 import re
 from django.shortcuts import redirect
@@ -53,20 +54,27 @@ def create(request):
         title = request.POST["title"]
         content = request.POST["content"]
         exists = util.exists_entry(title)
-        if exists:
-            return render(request, "encyclopedia/create.html", {
-                "title": title,
-                "content": content,
-                "exists": True,
-                "success": False,
-            })
-        else: 
-            try:
+        
+        try:
+            # Validar el contenido antes de guardar la nueva entrada
+            if not is_valid_content(content):
+                raise ValueError("Contenido no válido")
+                        
+            if exists:
+                return render(request, "encyclopedia/create.html", {
+                    "title": title,
+                    "content": content,
+                    "exists": True,
+                    "success": False,
+                })
+            else:
                 util.save_entry(title, content)
                 return wiki_page(request, title)
-            except Exception as e:
-                print(content)
-                return render(request, "encyclopedia/create.html", {
+        except ValueError as ve:
+            return HttpResponseBadRequest(str(ve))  # Devolver un error 400 si el contenido no es válido
+        except Exception as e:
+            print(content)
+            return render(request, "encyclopedia/create.html", {
                 "title": title,
                 "content": content,
                 "error": True,
@@ -77,7 +85,6 @@ def create(request):
             "success": True,
         })
     
-
 # redirect to random wiki page
 def random(request):
     pages = util.list_entries()
@@ -90,22 +97,26 @@ def edit(request, title):
         content = request.POST["content"]
         new_title = request.POST["title"]
         try:
-            if not is_valid_content(content):
-                raise ValueError("Invalid content. Please only use English characters or printable characters.")
-            else:
-                util.save_entry(new_title, content)
-                
-                return render(request, "encyclopedia/page.html", {
-                    "title": title,
-                    "html": content,
-                    "error": False,
-                    })
+            # Validar el contenido antes de guardar los cambios
+            if not is_valid_content(content): 
+                # Devolver un error 400 si el contenido no es válido
+                return render(request, "encyclopedia/edit.html", {
+                "title": new_title,
+                "content": content,
+                "error": True
+            })
+
+            util.save_entry(new_title, content)
+            # Redirigir a la página wiki de la entrada editada
+            wiki_page_url = reverse('wiki-page', args=[new_title])
+            return redirect(wiki_page_url)
+        except ValueError as ve:
+            return HttpResponseBadRequest(str(ve))  # Devolver un error 400 si el contenido no es válido
         except Exception as e:
             return render(request, "encyclopedia/edit.html", {
-                "title": title,
+                "title": new_title,
                 "content": content,
-                "error": True,
-                "error_message": str(e)
+                "error": True
             })
     else:
         content = util.get_entry(title)
@@ -113,7 +124,6 @@ def edit(request, title):
             "title": title,
             "content": content
         })
-    
 def search(request):
     query = request.GET['q']
     pages = util.list_entries()
